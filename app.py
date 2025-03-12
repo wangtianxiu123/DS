@@ -27,7 +27,7 @@ if st.button("发送"):
             model="deepseek-r1",  # 此处以 deepseek-r1 为例，可按需更换模型名称。
             messages=[{'role': 'user', 'content': user_input}],
             stream=True,
-            enable_search=True
+            enable_search=True,
         )
 
         # 用于存储完整响应的文本

@@ -31,6 +31,7 @@ if st.button("发送"):
 
         # 用于存储完整响应的文本
         full_text = ""
+        original_response = ""  # 用于存储原始响应
 
         # 处理流式响应并逐字返回
         with st.empty():  # 创建一个空的占位符
@@ -39,8 +40,12 @@ if st.button("发送"):
                     full_text += chunk.choices[0].delta.content
                     st.text(full_text)  # 实时更新文本
 
-        # 打印完整的文本
+        # 获取原始响应（假设 API 返回的原始内容在 stream 的最后一部分）
+        original_response = stream.choices[0].message['content'] if stream.choices else "无原始响应"
+
+        # 打印完整的文本和原始响应
         st.success("完整响应: " + full_text)
+        st.info("原始响应: " + original_response)
     else:
         if not api_key:
             st.warning("请输入 API Key！")

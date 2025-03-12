@@ -2,6 +2,7 @@ import os
 from openai import OpenAI
 import httpx
 import streamlit as st
+import json  # 导入 json 模块以格式化输出
 
 # Streamlit 页面设置
 st.title("Chat with OpenAI")
@@ -22,7 +23,7 @@ if st.button("发送"):
         )
 
         # 发送聊天请求
-        stream = client.chat.completions.create(
+        response = client.chat.completions.create(
             model="deepseek-r1",  # 此处以 deepseek-r1 为例，可按需更换模型名称。
             messages=[{'role': 'user', 'content': user_input}],
             stream=True,
@@ -31,21 +32,19 @@ if st.button("发送"):
 
         # 用于存储完整响应的文本
         full_text = ""
-        original_response = ""  # 用于存储原始响应
+        original_response = []  # 用于存储原始响应
 
         # 处理流式响应并逐字返回
         with st.empty():  # 创建一个空的占位符
-            for chunk in stream:
+            for chunk in response:
                 if chunk.choices[0].delta.content is not None:
                     full_text += chunk.choices[0].delta.content
                     st.text(full_text)  # 实时更新文本
-
-        # 获取原始响应（假设 API 返回的原始内容在流式响应的最后一部分）
-        original_response = full_text  # 使用完整的流式响应作为原始响应
+                original_response.append(chunk)  # 收集原始响应
 
         # 打印完整的文本和原始响应
         st.success("完整响应: " + full_text)
-        st.info("原始响应: " + original_response)
+        st.json(original_response)  # 以 JSON 格式显示原始响应
     else:
         if not api_key:
             st.warning("请输入 API Key！")

@@ -30,20 +30,15 @@ if st.button("发送"):
             extra_body={"enable_search": True}  # 添加 enable_search 参数
         )
 
-        # 用于存储完整响应的文本
-        full_text = ""
+        # 用于存储原始响应
         original_response = []  # 用于存储原始响应
 
         # 处理流式响应并逐字返回
         with st.empty():  # 创建一个空的占位符
             for chunk in response:
-                if chunk.choices[0].delta.content is not None:
-                    full_text += chunk.choices[0].delta.content
-                    st.text(full_text)  # 实时更新文本
                 original_response.append(chunk)  # 收集原始响应
 
-        # 打印完整的文本和原始响应
-        st.success("完整响应: " + full_text)
+        # 打印原始响应
         st.json(original_response)  # 以 JSON 格式显示原始响应
     else:
         if not api_key:
